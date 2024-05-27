@@ -47,7 +47,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return ${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.isStage : false)})())`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.isStage : false)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}getx`, {
@@ -64,7 +64,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return ${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.x : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.x : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}gety`, {
@@ -81,7 +81,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return ${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.y : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.y : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}getdir`, {
@@ -99,7 +99,7 @@ function register() {
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
-        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return ${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.direction : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.direction : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}setx`, {
@@ -125,7 +125,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"};${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.setXY(${NEWVALUE || 0}, ${variable}.y)};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${NEWVALUE || 0}, ${variable}.y)};\n`;
     })
 
     registerBlock(`${categoryPrefix}sety`, {
@@ -151,7 +151,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"};${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.setXY(${variable}.x, ${NEWVALUE || 0})};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${variable}.x, ${NEWVALUE || 0})};\n`;
     })
 
     registerBlock(`${categoryPrefix}setdir`, {
@@ -177,7 +177,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"};${variable} instanceof Scratch.vm.exports.RenderedTarget ? ${variable}.setDirection(${NEWVALUE || 0})};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setDirection(${NEWVALUE || 0})};\n`;
     })
 }
 
