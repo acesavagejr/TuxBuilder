@@ -125,6 +125,14 @@ const playSound = async (url, target) => {
 };
 
 playSound(ab, cd)
+}
+
+const supportsRenderedTargetExport = Scratch.vm.exports && Scratch.vm.exports.RenderedTarget;
+function isSpriteInternal(v) {
+  if (supportsRenderedTargetExport) {
+    return v instanceof Scratch.vm.exports.RenderedTarget;
+  }
+  return v != undefined && typeof v === "object";
 }`
 
 class Compiler {
