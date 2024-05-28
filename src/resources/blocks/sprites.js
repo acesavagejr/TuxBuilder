@@ -1,5 +1,6 @@
 import javascriptGenerator from '../javascriptGenerator';
 import registerBlock from '../register';
+import { compileVars } from '../compiler/compileVarSection';
 
 const categoryPrefix = 'sprites_';
 const categoryColor = '#4C97FF';
@@ -46,11 +47,11 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`(${SPRITE || "undefined"} !== undefined ? ${SPRITE}.isStage : false)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.isStage : false)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}getx`, {
-        message0: 'x of %1',
+        message0: 'x position of %1',
         args0: [
             {
                 "type": "input_value",
@@ -63,11 +64,11 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`(${SPRITE || "undefined"} !== undefined ? ${SPRITE}.x : 0)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.x : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}gety`, {
-        message0: 'y of %1',
+        message0: 'y position of %1',
         args0: [
             {
                 "type": "input_value",
@@ -80,7 +81,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`(${SPRITE || "undefined"} !== undefined ? ${SPRITE}.y : 0)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.y : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}getdir`, {
@@ -97,7 +98,86 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
-        return [`(${SPRITE || "undefined"} !== undefined ? ${SPRITE}.direction : 0)`, javascriptGenerator.ORDER_ATOMIC]
+        const variable = compileVars.next();
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.direction : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
+    })
+
+    registerBlock(`${categoryPrefix}setx`, {
+        message0: 'set x position of %1 to %2',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+            {
+                "type": "input_value",
+                "name": "NEWVALUE",
+                "check": "Number"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        // hack to get rid of the variable defined after by creating a new scope.
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${NEWVALUE || 0}, ${variable}.y)};\n`;
+    })
+
+    registerBlock(`${categoryPrefix}sety`, {
+        message0: 'set y position of %1 to %2',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+            {
+                "type": "input_value",
+                "name": "NEWVALUE",
+                "check": "Number"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        // hack to get rid of the variable defined after by creating a new scope.
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${variable}.x, ${NEWVALUE || 0})};\n`;
+    })
+
+    registerBlock(`${categoryPrefix}setdir`, {
+        message0: 'make %1 point in direction %2',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+            {
+                "type": "input_value",
+                "name": "NEWVALUE",
+                "check": "Number"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        // hack to get rid of the variable defined after by creating a new scope.
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setDirection(${NEWVALUE || 0})};\n`;
     })
 }
 
