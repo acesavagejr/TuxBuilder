@@ -123,10 +123,10 @@ function register() {
                 code += ('\n' + `isTerminal: true,`)
                 }
             }
-            if (TYPE === 'CONDITIONAL' || TYPE === 'LOOP') { 
+            if (TYPE === 'CONDITIONAL' || TYPE === 'LOOP' || TYPE === 'INLINE') { 
                 code += ('\n' + `branchCount: ${BRANCH_COUNT},`)
             }
-            if (TYPE === 'REPORTER' || TYPE === 'BOOLEAN') { 
+            if (TYPE === 'REPORTER' || TYPE === 'BOOLEAN' || TYPE === 'OBJECT' || TYPE === 'ARRAY') { 
                 if (DISABLE_MONITOR === 'true') {
                 code += ('\n' + `disableMonitor: true,`)
                 }
@@ -139,6 +139,78 @@ function register() {
     })
 
     registerBlock(`${categoryPrefix}createobject`, {
+        message0: 'create object %1 id: %2 %3 text: %4 %5 type: %6 %7 function: %8 %9',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_input",
+                "name": "ID",
+                "text": "id",
+                "spellcheck": false
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_input",
+                "name": "TEXT",
+                "text": "text",
+                "spellcheck": false
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_dropdown",
+                "name": "TYPE",
+                "options": [
+                    [ "button", "BUTTON" ],
+                    [ "label", "LABEL" ],
+                ]
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "FUNC"
+            }
+        ],
+        nextStatement: null,
+        inputsInline: false,
+        colour: categoryColor,
+    }, (block) => {
+        const ID = block.getFieldValue('ID')
+        const TEXT = block.getFieldValue('TEXT')
+        const TYPE = block.getFieldValue('TYPE')
+        const FUNC = javascriptGenerator.statementToCode(block, 'FUNC');
+        
+        let code;
+        if (TYPE === 'BUTTON') {
+        code = `blocks.push({
+            opcode: \`${ID}\`,
+            blockType: Scratch.BlockType.${TYPE},
+            text: \`${TEXT}\`,
+            disableMonitor: true
+        });
+        Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`;
+        } else {
+            code = `blocks.push({
+                opcode: \`${ID}\`,
+                blockType: Scratch.BlockType.${TYPE},
+                text: \`${TEXT}\`,
+                disableMonitor: true
+            });`;  
+        }
+        return `${code}\n`;
+    })
+
+    registerBlock(`${categoryPrefix}createhat`, {
         message0: 'create object %1 id: %2 %3 text: %4 %5 type: %6 %7 function: %8 %9',
         args0: [
             {
@@ -301,6 +373,42 @@ function register() {
         const code = `"${ID}": {
             type: Scratch.ArgumentType.${TYPE}, ${DEFAULT ? `
             defaultValue: ${DEFAULT},`: ''}
+        },`;
+        return `${code}\n`;
+    })
+    registerBlock(`${categoryPrefix}menu`, {
+        message0: 'create menu input %1 id: %2 %3 menu: %4',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_input",
+                "name": "ID",
+                "text": "ID",
+                "spellcheck": false
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_input",
+                "name": "MENU",
+                "text": "ID",
+                "spellcheck": false
+            },
+        ],
+        nextStatement: "BlockInput",
+        previousStatement: "BlockInput",
+        inputsInline: false,
+        colour: categoryColor,
+    }, (block) => {
+        const ID = block.getFieldValue('ID')
+        const MENU = block.getFieldValue('MENU')
+        
+        const code = `"${ID}": {
+            type: Scratch.ArgumentType.STRING,
+            menu: '${MENU}'
         },`;
         return `${code}\n`;
     })

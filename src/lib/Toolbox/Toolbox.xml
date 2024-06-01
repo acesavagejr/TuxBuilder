@@ -8,6 +8,10 @@
         <block type="sprites_getx" />
         <block type="sprites_gety" />
         <block type="sprites_getdir" />
+        <sep gap="48"></sep>
+        <block type="sprites_setx" />
+        <block type="sprites_sety" />
+        <block type="sprites_setdir" />
     </category>
     <category name="Events" colour="#FFBF00">
         <block type="events_interval" />
@@ -64,6 +68,7 @@
         <sep gap="48"></sep>
         <block type="operators_and" />
         <block type="operators_or" />
+        <block type="operators_xor" />
         <block type="operators_not" />
         <sep gap="48"></sep>
         <block type="operators_add" />
@@ -76,10 +81,12 @@
         <block type="operators_root" />
         <block type="operators_adv" />
         <sep gap="48"></sep>
+        <block type="operators_random" />
         <block type="operators_randomint" />
         <sep gap="48"></sep>
         <block type="operators_join" />
         <block type="operators_letter" />
+        <block type="operators_length" />
     </category>
     <category name="Conversions" colour="#8BC059">
         <block type="conversions_tonumber" />
@@ -117,9 +124,11 @@
     <category name="Blocks" colour="#7B7996">
         <block type="blocks_create" />
         <block type="blocks_createobject" />
+        <block type="blocks_createhat" />
         <block type="blocks_startbranch" />
         <block type="blocks_callhat" />
         <block type="blocks_input" />
+        <block type="blocks_menu" />
         <sep gap="48"></sep>
         <block type="blocks_get" />
         <block type="blocks_return" />
