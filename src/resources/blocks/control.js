@@ -247,15 +247,112 @@ function register() {
         return `${code}\n`;
     })
 
+    // while <> do {}
+    registerBlock(`${categoryPrefix}while`, {
+        message0: 'while %1 is true do %2 %3',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "CONDITION",
+                "check": "Boolean"
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        const code = `while (${CONDITION ? `Boolean(${CONDITION})` : 'false'}) { ${BLOCKS} };`;
+        return `${code}\n`;
+    })
+
+    // do {}while <> 
+    registerBlock(`${categoryPrefix}dowhile`, {
+        message0: 'do %3 %2 while %1 is true',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "CONDITION",
+                "check": "Boolean"
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        const code = `do { ${BLOCKS} } while (${CONDITION ? `Boolean(${CONDITION})` : 'false'});`;
+        return `${code}\n`;
+    })
+
+    // repeat {} until <> is true
+    registerBlock(`${categoryPrefix}repeatuntil`, {
+        message0: 'repeat %3 %2 until %1 is true',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "CONDITION",
+                "check": "Boolean"
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        const code = `while (${CONDITION ? `!Boolean(${CONDITION})` : 'true'}) { ${BLOCKS} };`;
+        return `${code}\n`;
+    })
+
+
     // break
     registerBlock(`${categoryPrefix}break`, {
-        message0: 'break',
+        message0: 'break out of loop',
         args0: [],
         previousStatement: null,
         inputsInline: true,
         colour: categoryColor
     }, (block) => {
         const code = `break;`;
+        return `${code}\n`;
+    })
+
+    // continue
+    registerBlock(`${categoryPrefix}continue`, {
+        message0: 'continue to next loop iteration',
+        args0: [],
+        previousStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const code = `continue;`;
         return `${code}\n`;
     })
 }

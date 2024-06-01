@@ -7,7 +7,7 @@ const categoryColor = '#4C97FF';
 
 function register() {
     registerBlock(`${categoryPrefix}stage`, {
-        message0: 'stage',
+        message0: 'stage sprite',
         args0: [],
         output: "Sprite",
         inputsInline: true,
@@ -33,6 +33,80 @@ function register() {
         return [`Scratch.vm.runtime.getSpriteTargetByName("${SPRITE}")`, javascriptGenerator.ORDER_ATOMIC];
     })
 
+    registerBlock(`${categoryPrefix}getblockuser`, {
+        message0: 'sprite/clone which ran this block',
+        args0: [],
+        output: "Sprite",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        return [`util.target`, javascriptGenerator.ORDER_ATOMIC];
+    })
+
+    registerBlock(`${categoryPrefix}getcloneofwithvar`, {
+        message0: 'get clone of %1 with var %2 set to %3',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+            {
+                "type": "input_value",
+                "name": "VARNAME",
+                "check": "String"
+            },
+            {
+                "type": "input_value",
+                "name": "VARVALUE",
+            }
+        ],
+        output: "Sprite",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        const variable2 = compileVars.next();
+        const variable3 = compileVars.next();
+        return [`(function(){
+        const ${variable} = ${SPRITE || "undefined"}; 
+        if(!isSpriteInternal(${variable})) {
+        return null
+        };
+        const ${variable2} = ${variable}.sprite != undefined ? ${variable}.sprite.clones : [];
+        const ${variable3} = ${variable2}.length; // hack to save time
+        // i stole this from clones plus, its not my code.
+        for (let index = 1; index < ${variable3}; index++) {
+          const cloneVar = clones[index].lookupVariableByNameAndType(varName, "", true);
+          if (
+            cloneVar &&
+            Scratch.Cast.compare(cloneVar.value, value) === 0
+          ) {
+            return (clones[index]);
+          }
+        }
+        return null;
+        }())`, javascriptGenerator.ORDER_ATOMIC];
+    })
+
+    registerBlock(`${categoryPrefix}issprite`, {
+        message0: 'is %1 a sprite',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE"
+            },
+        ],
+        output: "Boolean",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        return [`(isSpriteInternal(${SPRITE || "undefined"}))`, javascriptGenerator.ORDER_ATOMIC]
+    })
+    
+    
     registerBlock(`${categoryPrefix}isstage`, {
         message0: 'is %1 stage',
         args0: [
@@ -47,7 +121,62 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
         return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.isStage : false)})())`, javascriptGenerator.ORDER_ATOMIC]
+    })
+
+    registerBlock(`${categoryPrefix}isdisposed`, {
+        message0: 'has %1 been deleted',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+        ],
+        output: "Boolean",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.isDisposed : true)})())`, javascriptGenerator.ORDER_ATOMIC]
+    })
+
+    registerBlock(`${categoryPrefix}isoriginal`, {
+        message0: 'is %1 not a clone',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+        ],
+        output: "Boolean",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.isOriginal : true)})())`, javascriptGenerator.ORDER_ATOMIC]
+    })
+
+    registerBlock(`${categoryPrefix}getname`, {
+        message0: 'name of %1',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "SPRITE",
+                "check": "Sprite"
+            },
+        ],
+        output: "String",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
+        return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.getName() : "")})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
     registerBlock(`${categoryPrefix}getx`, {
@@ -64,6 +193,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
         return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.x : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 
@@ -81,6 +211,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const SPRITE = javascriptGenerator.valueToCode(block, 'SPRITE', javascriptGenerator.ORDER_ATOMIC);
+        const variable = compileVars.next();
         return [`((function(){const ${variable} = (${SPRITE || "undefined"}; return isSpriteInternal(${variable}) ? ${variable}.y : 0)})())`, javascriptGenerator.ORDER_ATOMIC]
     })
 

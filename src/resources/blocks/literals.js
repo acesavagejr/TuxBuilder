@@ -74,7 +74,7 @@ function register() {
     }, (block) => {
         const STRING = block.getFieldValue('STRING')
 
-        return ["'" + STRING + "'", javascriptGenerator.ORDER_ATOMIC];
+        return [JSON.stringify(STRING), javascriptGenerator.ORDER_ATOMIC]; // who decided it was a good idea to do this? they could easily insert an it's, and then it instantly breaks
     })
 
     // color

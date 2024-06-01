@@ -57,6 +57,27 @@ function register() {
         const code = `setTimeout(async () => { ${BLOCKS} }, (${TIME} * 1000));`;
         return `${code}\n`;
     })
+
+    // when flag
+
+    registerBlock(`${categoryPrefix}flagclicked`, {
+        message0: 'when flag clicked %1 %2 (ElectraMod and PenguinMod only)',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        const code = `Scratch.vm.runtime.on('HATS_STARTED', async(opcodeVariable)=>{if(opcodeVariable==='event_whenflagclicked'){${BLOCKS}}})`;
+        return `${code}\n`;
+    })
 }
 
 export default register;

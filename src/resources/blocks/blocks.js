@@ -470,5 +470,50 @@ function register() {
             const code = `Scratch.vm.runtime.startHats(\`\${Extension.prototype.getInfo().id}_${NAME}\`)`;
             return `${code}\n`;
         })
+
+    registerBlock(`${categoryPrefix}saveloopdata`, {
+        message0: 'save data with name %1 to %2 for next loop iteration',
+        args0: [
+            {
+                "type": "field_input",
+                "name": "NAME",
+                "text": "loopTimes",
+                "spellcheck": false
+            },
+            {
+                "type": "input_value",
+                "name": "VALUE"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const NAME = block.getFieldValue('NAME');
+        const VALUE = javascriptGenerator.valueToCode(block, 'VALUE', javascriptGenerator.ORDER_ATOMIC);
+        const code = `util.stackFrame[${JSON.stringify(NAME)}] = ${VALUE || "null"};`;
+        return `${code}\n`;
+    })
+
+    registerBlock(`${categoryPrefix}getloopdata`, {
+        message0: 'get loop data with name %1',
+        args0: [
+            {
+                "type": "field_input",
+                "name": "NAME",
+                "text": "loopTimes",
+                "spellcheck": false
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const NAME = block.getFieldValue('NAME');
+        const code = `(util.stackFrame[${JSON.stringify(NAME)}] ?? null)`;
+        return `${code}\n`;
+    })
 }
 export default register;
