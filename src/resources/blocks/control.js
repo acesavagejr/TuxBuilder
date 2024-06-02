@@ -334,7 +334,7 @@ function register() {
 
     // break
     registerBlock(`${categoryPrefix}break`, {
-        message0: 'break out of loop',
+        message0: 'break out of loop/switch',
         args0: [],
         previousStatement: null,
         inputsInline: true,
