@@ -300,7 +300,7 @@ function register() {
         code = `blocks.push({
             opcode: \`${ID}\`,
             blockType: Scratch.BlockType.${TYPE},
-            text: ${TEXT},`
+            text: \`${TEXT}\`,`
             code += ('\n' + `arguments: { ${INPUTS} },`)
             if (EDGE_ACTIVATED === 'true') {
               code += ('\n' + `isEdgeActivated: true,`)
