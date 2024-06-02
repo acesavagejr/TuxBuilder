@@ -211,7 +211,7 @@ function register() {
     })
 
     registerBlock(`${categoryPrefix}createhat`, {
-        message0: 'create object %1 id: %2 %3 text: %4 %5 type: %6 %7 function: %8 %9',
+        message0: 'create hat %1 id: %2 %3 text: %4 %5 type: %6 %7 is edge activated? %8 %9 should restart existing threads? %10 %11 inputs: %12 %13 function: %14 %15',
         args0: [
             {
                 "type": "input_dummy"
@@ -238,12 +238,42 @@ function register() {
                 "type": "field_dropdown",
                 "name": "TYPE",
                 "options": [
-                    [ "button", "BUTTON" ],
-                    [ "label", "LABEL" ],
+                    ["hat", "HAT"],
+                    ["event", "event"]
                 ]
             },
             {
                 "type": "input_dummy"
+            },
+            {
+                "type": "field_dropdown",
+                "name": "EDGE_ACTIVATED",
+                "options": [
+                    ["false", 'false'],
+                    ["true", 'true']
+                ]
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "field_dropdown",
+                "name": "SHOULDRESTARTEXISTINGTHREADS",
+                "options": [
+                    ["false", 'false'],
+                    ["true", 'true']
+                ]
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "INPUTS",
+                "check": "BlockInput"
             },
             {
                 "type": "input_dummy"
@@ -259,28 +289,34 @@ function register() {
     }, (block) => {
         const ID = block.getFieldValue('ID')
         const TEXT = block.getFieldValue('TEXT')
+        const EDGE_ACTIVATED = block.getFieldValue('EDGE_ACTIVATED')
+        const SHOULDRESTARTEXISTINGTHREADS = block.getFieldValue('SHOULDRESTARTEXISTINGTHREADS')
         const TYPE = block.getFieldValue('TYPE')
+        const INPUTS = javascriptGenerator.statementToCode(block, 'INPUTS');
         const FUNC = javascriptGenerator.statementToCode(block, 'FUNC');
         
         let code;
-        if (TYPE === 'BUTTON') {
+
         code = `blocks.push({
             opcode: \`${ID}\`,
             blockType: Scratch.BlockType.${TYPE},
-            text: \`${TEXT}\`,
-            disableMonitor: true
-        });
-        Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`;
-        } else {
-            code = `blocks.push({
-                opcode: \`${ID}\`,
-                blockType: Scratch.BlockType.${TYPE},
-                text: \`${TEXT}\`,
-                disableMonitor: true
-            });`;  
-        }
+            text: ${TEXT},`
+            code += ('\n' + `arguments: { ${INPUTS} },`)
+            if (EDGE_ACTIVATED === 'true') {
+              code += ('\n' + `isEdgeActivated: true,`)
+            } else {
+                code += ('\n' + `isEdgeActivated: false,`)
+            }
+            if (SHOULDRESTARTEXISTINGTHREADS === 'true') {
+                code += ('\n' + `ShouldRestartExistingThreads: true,`)
+            }
+            code = code.slice(0, -1);
+
+        code += ('\n' + `});
+            Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`);
         return `${code}\n`;
-    })
+    });
+    
 
     registerBlock(`${categoryPrefix}startbranch`, {
         message0: 'run branch %1 %2 loop? %3',

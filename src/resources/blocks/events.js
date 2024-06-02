@@ -61,7 +61,7 @@ function register() {
     // when flag
 
     registerBlock(`${categoryPrefix}flagclicked`, {
-        message0: 'when flag clicked %1 %2 (ElectraMod and PenguinMod only)',
+        message0: 'when flag clicked (before green flag event) %1 %2 ',
         args0: [
             {
                 "type": "input_dummy"
@@ -75,7 +75,64 @@ function register() {
         colour: categoryColor,
     }, (block) => {
         const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
-        const code = `Scratch.vm.runtime.on('HATS_STARTED', async(opcodeVariable)=>{if(opcodeVariable==='event_whenflagclicked'){${BLOCKS}}})`;
+        let code = `Scratch.vm.runtime.on('PROJECT_START', async()=>{${BLOCKS}});`;
+        return `${code}\n`;
+    })
+
+    registerBlock(`${categoryPrefix}projectstopped`, {
+        message0: 'when project stopped %1 %2 ',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        let code = `Scratch.vm.runtime.on('PROJECT_STOP_ALL', async()=>{${BLOCKS}});`;
+        return `${code}\n`;
+    })
+
+    registerBlock(`${categoryPrefix}beforeexecute`, {
+        message0: 'before execute %1 %2 ',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        let code = `Scratch.vm.runtime.on('BEFORE_EXECUTE', async()=>{${BLOCKS}});`;
+        return `${code}\n`;
+    })
+
+    registerBlock(`${categoryPrefix}afterexecute`, {
+        message0: 'after execute %1 %2 ',
+        args0: [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        inputsInline: true,
+        colour: categoryColor,
+    }, (block) => {
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        let code = `Scratch.vm.runtime.on('AFTER_EXECUTE', async()=>{${BLOCKS}});`;
         return `${code}\n`;
     })
 }
