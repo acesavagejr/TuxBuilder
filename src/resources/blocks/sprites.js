@@ -256,7 +256,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${NEWVALUE || 0}, ${variable}.y)};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${NEWVALUE || 0}, ${variable}.y) : 0};\n`;
     })
 
     registerBlock(`${categoryPrefix}sety`, {
@@ -282,7 +282,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${variable}.x, ${NEWVALUE || 0})};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setXY(${variable}.x, ${NEWVALUE || 0}) : 0};\n`;
     })
 
     registerBlock(`${categoryPrefix}setdir`, {
@@ -308,7 +308,7 @@ function register() {
         const NEWVALUE = javascriptGenerator.valueToCode(block, 'NEWVALUE', javascriptGenerator.ORDER_ATOMIC);
         const variable = compileVars.next();
         // hack to get rid of the variable defined after by creating a new scope.
-        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setDirection(${NEWVALUE || 0})};\n`;
+        return `{const ${variable} = ${SPRITE || "undefined"}; isSpriteInternal(${variable}) ? ${variable}.setDirection(${NEWVALUE || 0}) : 0};\n`;
     })
 }
 

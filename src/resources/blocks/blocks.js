@@ -211,7 +211,7 @@ function register() {
     })
 
     registerBlock(`${categoryPrefix}createhat`, {
-        message0: 'create hat %1 id: %2 %3 text: %4 %5 type: %6 %7 is edge activated? %8 %9 should restart existing threads? %10 %11 inputs: %12 %13 function: %14 %15',
+        message0: 'create hat %1 id: %2 %3 text: %4 %5 is edge activated? %6 %7 should restart existing threads? %8 %9 inputs: %10 %11 function: %12 %13',
         args0: [
             {
                 "type": "input_dummy"
@@ -230,17 +230,6 @@ function register() {
                 "name": "TEXT",
                 "text": "text",
                 "spellcheck": false
-            },
-            {
-                "type": "input_dummy"
-            },
-            {
-                "type": "field_dropdown",
-                "name": "TYPE",
-                "options": [
-                    ["hat", "HAT"],
-                    ["event", "event"]
-                ]
             },
             {
                 "type": "input_dummy"
@@ -291,29 +280,22 @@ function register() {
         const TEXT = block.getFieldValue('TEXT')
         const EDGE_ACTIVATED = block.getFieldValue('EDGE_ACTIVATED')
         const SHOULDRESTARTEXISTINGTHREADS = block.getFieldValue('SHOULDRESTARTEXISTINGTHREADS')
-        const TYPE = block.getFieldValue('TYPE')
         const INPUTS = javascriptGenerator.statementToCode(block, 'INPUTS');
         const FUNC = javascriptGenerator.statementToCode(block, 'FUNC');
         
-        let code;
-
-        code = `blocks.push({
-            opcode: \`${ID}\`,
-            blockType: Scratch.BlockType.${TYPE},
-            text: \`${TEXT}\`,`
-            code += ('\n' + `arguments: { ${INPUTS} },`)
-            if (EDGE_ACTIVATED === 'true') {
-              code += ('\n' + `isEdgeActivated: true,`)
-            } else {
-                code += ('\n' + `isEdgeActivated: false,`)
-            }
-            if (SHOULDRESTARTEXISTINGTHREADS === 'true') {
-                code += ('\n' + `ShouldRestartExistingThreads: true,`)
-            }
-            code = code.slice(0, -1);
+        let code = `blocks.push({
+            opcode: '${ID}',
+            blockType: Scratch.BlockType.HAT,
+            text: '${TEXT}',\n`;
+        code += `arguments: { ${INPUTS} },\n`
+        code += `isEdgeActivated: ${EDGE_ACTIVATED},\n`
+        if (SHOULDRESTARTEXISTINGTHREADS === 'true') {
+            code += ('\n' + `ShouldRestartExistingThreads: true,`)
+        }
+        code = code.slice(0, -1);
 
         code += ('\n' + `});
-            Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`);
+            Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC}; return true };`);
         return `${code}\n`;
     });
     
@@ -542,14 +524,13 @@ function register() {
                 "spellcheck": false
             }
         ],
-        previousStatement: null,
-        nextStatement: null,
+        output: null,
         inputsInline: true,
         colour: categoryColor,
     }, (block) => {
         const NAME = block.getFieldValue('NAME');
         const code = `(util.stackFrame[${JSON.stringify(NAME)}] ?? null)`;
-        return `${code}\n`;
+        return [`(${code})`, javascriptGenerator.ORDER_ATOMIC];
     })
 }
 export default register;
