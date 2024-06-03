@@ -110,7 +110,8 @@ function register() {
         let code;
 
         code = `blocks.push({
-            opcode: \`${ID}\`,
+            opcode: '${ID}',
+            func: 'block-${ID}',
             blockType: Scratch.BlockType.${TYPE},`
             if ((TEXT.startsWith('["') && TEXT.endsWith('"]')) || (TEXT.startsWith("['") && TEXT.endsWith("']")) || (TEXT.startsWith("[`") && TEXT.endsWith("`]"))) {
                 code += ('\n' + `text: ${TEXT},`)
@@ -134,7 +135,7 @@ function register() {
             code = code.slice(0, -1);
 
         code += ('\n' + `});
-            Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`);
+            Extension.prototype['block-${ID}'] = async (args, util) => { ${FUNC} };`);
         return `${code}\n`;
     })
 
@@ -193,12 +194,13 @@ function register() {
         let code;
         if (TYPE === 'BUTTON') {
         code = `blocks.push({
-            opcode: \`${ID}\`,
+            opcode: '${ID}',
+            func: 'button-${ID}'
             blockType: Scratch.BlockType.${TYPE},
             text: \`${TEXT}\`,
             disableMonitor: true
         });
-        Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC} };`;
+        Extension.prototype['button-${ID}'] = async (args, util) => { ${FUNC} };`;
         } else {
             code = `blocks.push({
                 opcode: \`${ID}\`,
@@ -285,6 +287,7 @@ function register() {
         
         let code = `blocks.push({
             opcode: '${ID}',
+            func: 'block-${ID}'
             blockType: Scratch.BlockType.HAT,
             text: '${TEXT}',\n`;
         code += `arguments: { ${INPUTS} },\n`
@@ -295,7 +298,7 @@ function register() {
         code = code.slice(0, -1);
 
         code += ('\n' + `});
-            Extension.prototype[\`${ID}\`] = async (args, util) => { ${FUNC}; return true };`);
+            Extension.prototype['block-${ID}'] = async (args, util) => { ${FUNC}; return true };`);
         return `${code}\n`;
     });
     

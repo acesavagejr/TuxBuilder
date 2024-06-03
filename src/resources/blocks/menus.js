@@ -85,14 +85,13 @@ function register() {
         const ID = block.getFieldValue('ID')
         const VALUES = javascriptGenerator.valueToCode(block, 'VALUES', javascriptGenerator.ORDER_ATOMIC)
         const REPORTERS = block.getFieldValue('REPORTERS')
-        const def = compileVars.new()
         
         const code = `menus["${ID}"] = {
             acceptReporters: ${REPORTERS},
-            items: "${def}"
+            items: "dynamicmenu-${ID}"
         }
         
-        Extension.prototype["${def}"] = ${VALUES}`
+        Extension.prototype["dynamicmenu-${ID}"] = ${VALUES}`
         return `${code}\n`;
     })
 }
