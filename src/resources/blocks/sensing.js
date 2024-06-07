@@ -123,6 +123,16 @@ function register() {
     }, (block) => {
         return [`((new Date(new Date(Date.now()).getYear(), 1, 29)).getDate() === 29)`, javascriptGenerator.ORDER_ATOMIC];
     })
+
+    registerBlock(`${categoryPrefix}usingpenguinmodorforks`, {
+        message0: 'is using PenguinMod or forks?',
+        args0: [],
+        output: "Boolean",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        return [`(!!Scratch.extensions.isPenguinMod)`, javascriptGenerator.ORDER_ATOMIC];
+    })
 }
 
 Blockly.Extensions.register('single_character_validation', function() {
